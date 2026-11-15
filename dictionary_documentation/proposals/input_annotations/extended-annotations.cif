@@ -1,5 +1,5 @@
-# Full module example. Custom example: terms illustrate the data contract.
-data_extended_annotations
+# Complete illustrative input; proposed component 0.3.0, not an executed design.
+data_annotated_internal
 _entry.id annotation_example
 
 _struct.entry_id annotation_example
@@ -12,7 +12,7 @@ _audit_conform.dict_name
 _audit_conform.dict_version
 _audit_conform.dict_location
 'mmcif_ma.dic' 1.4.9 'https://mmcif.wwpdb.org/dictionaries/ascii/mmcif_ma.dic'
-'mmcif_ma-annotation.dic' 0.2.0 'https://github.com/kierandidi/ModelCIF/blob/propose-input-annotations/base/mmcif_ma-annotation.dic'
+'mmcif_ma-annotation.dic' 0.3.0 'https://github.com/kierandidi/ModelCIF/blob/propose-input-annotations/base/mmcif_ma-annotation.dic'
 
 loop_
 _chem_comp.id
@@ -103,7 +103,6 @@ _ma_model_list.data_id
 _ma_model_list.model_type
 _ma_model_list.model_type_other_details
 1 'Illustrative reference' 2 'Ab initio model' .
-2 'Illustrative output' 4 'Ab initio model' .
 
 loop_
 _ma_model_group.id
@@ -115,7 +114,6 @@ loop_
 _ma_model_group_link.group_id
 _ma_model_group_link.model_id
 1 1
-1 2
 
 loop_
 _atom_site.group_PDB
@@ -137,10 +135,19 @@ _atom_site.auth_asym_id
 _atom_site.auth_comp_id
 _atom_site.B_iso_or_equiv
 _atom_site.pdbx_PDB_model_num
-ATOM 10 C CA . ALA 1 1 ? A 0.000 0 0 1.000 1 A ALA 0.000 1
-ATOM 20 C CA . GLY 2 2 ? A 3.800 0 0 1.000 1 A GLY 0.000 1
-ATOM 30 C CA . ALA 1 1 ? A 0.000 0 0 1.000 1 A ALA 0.000 2
-ATOM 40 C CA . GLY 2 2 ? A 3.800 0 0 1.000 1 A GLY 0.000 2
+_atom_site.ma_atom_array_index
+_atom_site.ma_condition_index_1_residue
+_atom_site.ma_condition_sequence_1_residue
+_atom_site.ma_condition_sequence_probability_ALA_1_residue
+_atom_site.ma_condition_sequence_probability_GLY_1_residue
+_atom_site.ma_condition_CoordinateGroup_1_atom
+_atom_site.ma_condition_hotspot_1_atom
+_atom_site.ma_token_id
+_atom_site.ma_molecule_id
+_atom_site.ma_token_index
+_atom_site.ma_condition_index_group_1_token
+ATOM 10 C CA . ALA 1 1 ? A 0.000 0 0 1.000 1 A ALA 0.000 1 0 True <M> 0.7 0 7 False t1 m1 0 0
+ATOM 20 C CA . GLY 2 2 ? A 3.800 0 0 1.000 1 A GLY 0.000 1 1 True <M> . . 7 False t2 m1 1 0
 
 loop_
 _atom_type.symbol
@@ -172,223 +179,26 @@ _ma_protocol_step.output_data_group_id
 3 1 3 'structure validation' 5 6
 
 loop_
-_ma_annotation_definition.id
-_ma_annotation_definition.definition_key
-_ma_annotation_definition.version
-_ma_annotation_definition.name
-_ma_annotation_definition.description
-_ma_annotation_definition.subject_level
-_ma_annotation_definition.body_order
-_ma_annotation_definition.value_kind
-_ma_annotation_definition.units
-_ma_annotation_definition.omitted_state
-_ma_annotation_definition.parameter_kind
-_ma_annotation_definition.symmetric
-_ma_annotation_definition.domain_id
-_ma_annotation_definition.array_element_kind
-_ma_annotation_definition.array_rank
-_ma_annotation_definition.array_transform
-1 proposal:coordinate draft-1 coordinate 'Complete Cartesian target in the referenced frame.' atom 1 point3 angstroms unconstrained . . . . . .
-2 'proposal:sequence_probability' draft-1 'sequence_probability' 'Partial probabilities over canonical-polymer-28; unspecified candidates share remaining mass.' residue 1 real none unconstrained component . . . . .
-3 example:task draft-1 task task system 0 text none unconstrained . . . . . .
-4 example:paired draft-1 paired paired residue 2 boolean none unconstrained . YES . . . .
-5 example:indexed draft-1 indexed indexed token 1 boolean none unconstrained . . . . . .
-6 'example:chain_label' draft-1 'chain_label' 'chain label' chain 1 text none unconstrained . . . . . .
-7 'example:molecule_count' draft-1 'molecule_count' 'molecule count' molecule 1 integer none unconstrained . . . . . .
-8 example:role draft-1 role role atom 1 text none unconstrained . . 1 . . .
-9 example:features draft-1 features features token 1 array none unconstrained . . . real 2 invariant
-10 'proposal:sequence_identity' draft-1 'sequence_identity' 'Exact requested chemical component, independently of the reference identity.' residue 1 component none unconstrained . . . . . .
-11 'example:index_group' draft-1 'index_group' 'index group' token 1 group none unconstrained . . . . . .
-12 'example:custom_probability' draft-1 'custom_probability' 'Illustrative complete two-component categorical distribution; no implicit normalization.' residue 1 real none unconstrained component . 2 . . .
+_ma_annotation_context.entry_id
+_ma_annotation_context.data_id
+_ma_annotation_context.stage
+_ma_annotation_context.required_for_execution
+_ma_annotation_context.profile_uri
+_ma_annotation_context.details
+'annotation_example' 3 authored True . 'Illustrative authored conditions; protocol records describe an example workflow, not an executed design.'
 
 loop_
-_ma_annotation_set.id
-_ma_annotation_set.data_id
-_ma_annotation_set.model_id
-_ma_annotation_set.stage
-_ma_annotation_set.purpose
-_ma_annotation_set.required_for_execution
-1 3 1 authored condition YES
-2 3 . authored condition YES
-3 3 1 derived 'prepared feature' NO
+_ma_condition_InternalCoordinate_1_atom.model_num
+_ma_condition_InternalCoordinate_1_atom.idx0
+_ma_condition_InternalCoordinate_1_atom.val0
+_ma_condition_InternalCoordinate_1_atom.val1
+_ma_condition_InternalCoordinate_1_atom.val2
+1 0 0 0 0
+1 1 3.8 0 0
 
 loop_
-_ma_annotation_frame.id
-_ma_annotation_frame.kind
-_ma_annotation_frame.model_id
-G 'independent rigid' .
-
-loop_
-_ma_annotation_atom.id
-_ma_annotation_atom.set_id
-_ma_annotation_atom.definition_id
-_ma_annotation_atom.atom_id
-_ma_annotation_atom.x
-_ma_annotation_atom.y
-_ma_annotation_atom.z
-_ma_annotation_atom.frame_id
-_ma_annotation_atom.value_text
-1 1 1 10 0 0 0 G .
-2 1 1 20 3.8 0 0 G .
-3 1 8 10 . . . . donor
-
-loop_
-_ma_annotation_residue.id
-_ma_annotation_residue.set_id
-_ma_annotation_residue.definition_id
-_ma_annotation_residue.label_asym_id
-_ma_annotation_residue.label_entity_id
-_ma_annotation_residue.label_seq_id
-_ma_annotation_residue.component_id
-_ma_annotation_residue.value_real
-1 1 2 A 1 1 ALA 0.7
-2 1 2 A 1 1 GLY 0
-3 1 12 A 1 2 ALA .25
-4 1 12 A 1 2 GLY .75
-
-loop_
-_ma_annotation_domain.id
-_ma_annotation_domain.name
-_ma_annotation_domain.version
-_ma_annotation_domain.kind
-_ma_annotation_domain.description
-1 example:role 1 categorical 'Illustrative mutually exclusive atom roles.'
-2 'example:two_components' 1 component 'Closed example domain containing alanine and glycine.'
-
-loop_
-_ma_annotation_domain_value.domain_id
-_ma_annotation_domain_value.code
-_ma_annotation_domain_value.meaning
-_ma_annotation_domain_value.comp_id
-1 donor 'Requested donor role' .
-1 acceptor 'Requested acceptor role' .
-2 ALA Alanine ALA
-2 GLY Glycine GLY
-
-loop_
-_ma_annotation_group.id
-_ma_annotation_group.data_id
-_ma_annotation_group.model_id
-_ma_annotation_group.kind
-_ma_annotation_group.definition_key
-_ma_annotation_group.version
-_ma_annotation_group.description
-_ma_annotation_group.ordered
-_ma_annotation_group.context_group_id
-1 2 1 token 'example:ca_token' 1 'One CA atom per token' YES .
-2 2 1 token 'example:ca_token' 1 'One CA atom per token' YES .
-3 2 1 molecule 'example:chain_molecule' 1 'Reference molecular context' YES .
-4 2 1 index 'example:relative_index' 1 'Known relative token offsets' YES 3
-5 3 . context 'example:logical_design' 1 'Ordered logical residue context' YES .
-
-loop_
-_ma_annotation_group_member.group_id
-_ma_annotation_group_member.ordinal_id
-_ma_annotation_group_member.atom_id
-_ma_annotation_group_member.child_group_id
-_ma_annotation_group_member.subject_id
-_ma_annotation_group_member.index_offset
-1 1 10 . . .
-2 1 20 . . .
-3 1 . 1 . .
-3 2 . 2 . .
-4 1 . 1 . 0
-4 2 . 2 . 1
-5 1 . . 3 .
-5 2 . . 4 .
-
-loop_
-_ma_annotation_subject.id
-_ma_annotation_subject.data_id
-_ma_annotation_subject.model_id
-_ma_annotation_subject.kind
-_ma_annotation_subject.level
-_ma_annotation_subject.atom_id
-_ma_annotation_subject.label_asym_id
-_ma_annotation_subject.label_entity_id
-_ma_annotation_subject.label_seq_id
-_ma_annotation_subject.group_id
-_ma_annotation_subject.context_group_id
-_ma_annotation_subject.min_length
-_ma_annotation_subject.max_length
-1 2 1 reference residue . A 1 1 . . . .
-2 2 1 reference residue . A 1 2 . . . .
-3 3 . position residue . . . . . 5 1 1
-4 3 . segment residue . . . . . 5 0 2
-5 4 2 reference residue . A 1 1 . . . .
-6 2 1 reference atom 10 . . . . . . .
-7 4 2 reference atom 30 . . . . . . .
-8 4 2 reference atom 40 . . . . . . .
-
-loop_
-_ma_annotation_value.id
-_ma_annotation_value.set_id
-_ma_annotation_value.definition_id
-_ma_annotation_value.value_text
-_ma_annotation_value.state
-_ma_annotation_value.is_default
-_ma_annotation_value.subject_id_1
-_ma_annotation_value.subject_id_2
-_ma_annotation_value.value_boolean
-_ma_annotation_value.label_asym_id
-_ma_annotation_value.group_id
-_ma_annotation_value.value_integer
-_ma_annotation_value.array_id
-_ma_annotation_value.value_group_id
-_ma_annotation_value.value_comp_id
-1 1 3 'Illustrative design task' specified NO . . . . . . . . .
-2 1 4 . specified NO 1 2 YES . . . . . .
-3 1 6 reference specified NO . . . A . . . . .
-4 1 7 . specified NO . . . . 3 2 . . .
-5 3 9 . specified NO . . . . 1 . 1 . .
-6 1 11 . specified NO . . . . 1 . . 4 .
-7 1 5 . unconstrained NO . . . . 2 . . . .
-8 1 5 . specified YES . . YES . . . . . .
-9 2 10 . specified NO 3 . . . . . . . ALA
-
-loop_
-_ma_annotation_array.id
-_ma_annotation_array.omitted_state
-1 unknown
-
-loop_
-_ma_annotation_axis.id
-_ma_annotation_axis.definition_id
-_ma_annotation_axis.array_id
-_ma_annotation_axis.axis_order
-_ma_annotation_axis.length
-_ma_annotation_axis.label_kind
-1 9 . 1 . text
-2 9 . 2 2 text
-3 . 1 1 2 .
-
-loop_
-_ma_annotation_axis_label.axis_id
-_ma_annotation_axis_label.index
-_ma_annotation_axis_label.label
-3 1 'row_a'
-3 2 'row_b'
-2 1 'feature_a'
-2 2 'feature_b'
-
-loop_
-_ma_annotation_array_value.array_id
-_ma_annotation_array_value.element_index
-_ma_annotation_array_value.state
-_ma_annotation_array_value.value_real
-1 1 specified 0.1
-1 2 specified 0
-1 3 'not_applicable' .
-
-loop_
-_ma_annotation_relation.id
-_ma_annotation_relation.source_subject_id
-_ma_annotation_relation.target_subject_id
-_ma_annotation_relation.relation
-_ma_annotation_relation.protocol_step_id
-_ma_annotation_relation.target_ordinal_id
-1 4 3 'adjacent_after' . .
-2 3 5 realized 1 1
-3 6 7 copy 1 .
-4 . 8 generated 1 .
-5 4 . deleted 1 .
+_ma_condition_chain_2_chain.model_num
+_ma_condition_chain_2_chain.idx0
+_ma_condition_chain_2_chain.idx1
+_ma_condition_chain_2_chain.val0
+1 0 1 True

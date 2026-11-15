@@ -1,62 +1,81 @@
-# Annotation coverage
+# Canonical field catalogue
 
-The consolidated 16-category draft dictionary covers the six semantic levels, body orders 0/1/2, typed scalars and shaped values, domains/defaults, sparse relations, custom definitions and metadata needed to preserve annotations through edits. This table groups all 59 entries in a scoped source inventory; it is not a full live-registry enumeration or proof of production-library conformance. All entries have a carrier mapping; shared scientific registration of custom operational definitions still requires domain review.
+The proposal preserves the named AtomWorks/RFD4 annotation layout. These 59 entries are a scoped inventory from four source modules, including 28 dynamically generated probability classes; other plugins can register additional fields. The dictionary defines 52 scalar annotation columns and six idx/val payload categories. The remaining entry, distance, maps to existing ModelCIF restraints.
 
-| Existing annotations | Canonical representation and conversion requirements |
-| --- | --- |
-| `expsegmin`, `expsegmax` | A logical subject of kind segment with minimum/maximum realized length, context and topology/realization relations. Replace placeholder-residue sentinel encoding with declared logical subjects. Preserve zero-length bounds; -1 means this annotation is inactive, not a negative segment length. Use the module’s bound, order and protocol-linked realization rules. |
-| `atomize` | Tokenization definition/version and resulting explicit membership, plus an atomistic treatment request where necessary. Materialize structure-dependent defaults. Distinguish an authored request from the tokenization actually consumed. Retain atom-level source semantics; a boolean alone is not a portable tokenizer. |
-| `sequence` | Component identity assignment on a residue or logical position. Map <M> to explicit condition state. Reference unambiguous canonical or custom component definitions. Use proposal:sequence_identity: conflicting explicit probabilities are errors; exact identity determines one-hot probabilities. Record inferred identities in an effective set. |
-| `coordinate`, `InternalCoordinate`, `CoordinateGroup` | One atom/XYZ row per target, with a frame reference identifying placement and rigid-group membership. Distinguish absolute model placement from independent rigid placement. InternalCoordinate is group-local Cartesian geometry, not bond/angle/torsion coordinates. Replace reserved -1/0/positive group conventions with explicit states/frame kind. Require complete finite triples; reject/report partial legacy triples, whose handling differs between current paths. Keep coordinate presence and group membership consistent. |
-| `index`, `index-group` | Indexed-status definition and contextual token membership, ordered groups and explicit relative offsets. C_IDX defaults to true; materialize or define that default. Record molecule instance context and unindexed insertion relations, not just group integers. Preserve any known offsets and distinguish unknown inter-group distances. |
-| `distance` | Existing ModelCIF distance restraints where endpoint and scientific semantics match, with annotation state/purpose links as required. Do not introduce a competing distance category for already representable semantics. Preserve angstrom units, bounds/tolerances and endpoint symmetry through the existing restraint definitions. The source mask uses distance > 0; do not invent a requested zero-distance constraint from inactive storage. |
-| `n-terminus`, `c-terminus` | Typed terminal-position condition on structural/logical residues, linked to chain topology. Materialize structural defaults and account for non-polymers. Define false/inactive behavior using each consumer, not a generic boolean rule. Validate against future topology and realized chain boundaries. |
-| `chain` | Symmetric pair relation between chain subjects with explicit instance membership. Validate consistency before collapsing atom-broadcast pair storage. Record same-chain/default behavior explicitly; an unspecified relation is not an asserted separation. Keep chain and molecule instance/group identity distinct. |
-| `hotspot`, `hbond`, `pistack`, `pication`, `saltbridge`, `hydrophobic`, `metal-coord` | Typed atom-level condition with a versioned categorical/boolean domain and partner/context references. Do not infer observed interaction from a request. Hotspot false means no hotspot request, not a requested anti-hotspot. Use symbolic donor/acceptor/both, aromatic/cation/both, positive/negative, and metal/coordinating domains. Source NONE means unconstrained. Version the scientific interaction definition and give partner/context separately from training-label preparation recipes. |
-| `rasa-binned` | Atom-level categorical solvent-accessibility condition with versioned bin semantics. A profile must supply radii, normalization, probe, algorithm, numeric bin boundaries and source provenance. If unavailable, retain a namespaced unresolved legacy definition and refuse required execution; do not claim a standardized RASA measurement. Map UNSPECIFIED to explicit state without interpreting its integer code as a measurement. |
-| `secondary-structure` | Residue-level categorical secondary-structure condition. Version the symbolic domain and assignment convention. Distinguish condition, prepared label and evaluated result. Map NONE to its actual inactive meaning. |
-| `cath-label` | Residue-level classification term and vocabulary release/source. Define CATH label granularity and source release. Preserve null/unassigned state and residue coverage without relying on fixed text width. |
-| `ChainCentroid` | Explicitly defined centroid target with point shape, frame and selected contributing atoms. Source annotation level is atom, despite its class name; do not silently relabel it chain-level. The inspected featurizer uses an unweighted arithmetic mean and may add noise. Preserve its saved XYZ target and selected contributing atoms; do not substitute center of mass or recompute away noise. Record coordinate centering/noise in preprocessing provenance and validate broadcast consistency. |
-| `basepair` | Symmetric residue-pair relation. For the canonical pair predicate, YES requests a pair and NO requests its absence; unconstrained is neither. Source PAIR=1 converts to YES. The inspected RFD4 pipeline treats every stored sparse C_BP row as positive, ignoring its saved enum value, while another helper preserves values. Legacy rows carrying 0 or 2 are therefore ambiguous: report/reject them until the producing/consuming path is identified, rather than guessing a negative/inactive meaning. |
-| `na-ss-state` | One-residue nucleic structural-state condition with a versioned domain. Its use of BasePairEnum does not turn it into a two-body relation. Use symbolic paired/unpaired with UNSPECIFIED mapped to unconstrained. In the inspected pipeline, LOOP supplies explicit negative pair conditioning across that residue. Conflicting pairwise positive requests must be rejected when conditions are combined. |
-| `src-coordinate-conditioned-region`, `src-component`, `src-index-group`, `is-unindexed-insertion` | Data/artifact-scoped correspondence and derivation records, with descriptive source labels retained when useful. Do not infer globally unique subjects from short local strings or -1 sentinels. Represent generated/deleted subjects, assembly copies and insertion mapping explicitly. If the old file lacks sufficient source identity, preserve the label and report unresolved correspondence. These annotations can occur on derived/output data; an input-only namespace is insufficient. |
-| `coords-with-insertion` | Derived reference point values with frame, structural correspondence and producing protocol. This is reference geometry, not itself a QA score. Preserve point transformation and insertion correspondence. Store downstream computed QA in existing ModelCIF result categories. |
-| `sequence-probability-<component>` (28 classes; components listed below) | One compact residue/component/value row for each specified probability, with explicit states when needed. Map each source probability class to its explicit chemical component, without private channel indices. Zero excludes the component; NaN is unspecified in the source. Use the module’s partial-mass and exact-identity rules: supplied mass ≤1, complete mass 1, no implicit renormalization, and explicit conflicts rejected. Noncanonical alphabets require custom domains. The 28 built-in channels are not a universal chemical vocabulary; the representation must admit other components. Use the compact component-keyed scalar rows as the authoritative layout; retain source scalar accessors without constructing a per-file shape/axis hierarchy. |
+All names below are proposed, not released. For scalar entries the target belongs to the existing atom_site category. Each separate table also has model_num. Types, enum meanings, units and omission rules are in the DDL2 component and [contract](annotation-module.md).
 
-The 28 probability components are `ALA ARG ASN ASP CYS GLN GLU GLY HIS ILE LEU LYS MET PHE PRO SER THR TRP TYR VAL A C G U DA DC DG DT`. Rows name components directly. The worked definition fixes this 28-component domain once in the specification; other domains require a separately versioned definition. General array axes must still declare their labels/order, without private channel conventions.
+| Native name | Proposed name | Level/body | Storage |
+| --- | --- | --- | --- |
+| `annotation_expsegmin_1_residue` | `_atom_site.ma_annotation_expsegmin_1_residue` | residue/1 | atom column |
+| `annotation_expsegmax_1_residue` | `_atom_site.ma_annotation_expsegmax_1_residue` | residue/1 | atom column |
+| `atomize` | `_atom_site.ma_atomize` | atom/1 | atom column |
+| `condition_sequence_1_residue` | `_atom_site.ma_condition_sequence_1_residue` | residue/1 | atom column |
+| `condition_coordinate_1_atom` | `ma_condition_coordinate_1_atom` | atom/1 | idx/val table |
+| `condition_index_1_residue` | `_atom_site.ma_condition_index_1_residue` | residue/1 | atom column |
+| `condition_distance_2_atom` | `ma_distance_restraints` | atom/2 | existing restraint |
+| `condition_n-terminus_1_residue` | `_atom_site.ma_condition_n_terminus_1_residue` | residue/1 | atom column |
+| `condition_c-terminus_1_residue` | `_atom_site.ma_condition_c_terminus_1_residue` | residue/1 | atom column |
+| `condition_chain_2_chain` | `ma_condition_chain_2_chain` | chain/2 | idx/val table |
+| `condition_hotspot_1_atom` | `_atom_site.ma_condition_hotspot_1_atom` | atom/1 | atom column |
+| `condition_rasa-binned_1_atom` | `_atom_site.ma_condition_rasa_binned_1_atom` | atom/1 | atom column |
+| `condition_hbond_1_atom` | `_atom_site.ma_condition_hbond_1_atom` | atom/1 | atom column |
+| `condition_pistack_1_atom` | `_atom_site.ma_condition_pistack_1_atom` | atom/1 | atom column |
+| `condition_pication_1_atom` | `_atom_site.ma_condition_pication_1_atom` | atom/1 | atom column |
+| `condition_saltbridge_1_atom` | `_atom_site.ma_condition_saltbridge_1_atom` | atom/1 | atom column |
+| `condition_hydrophobic_1_atom` | `_atom_site.ma_condition_hydrophobic_1_atom` | atom/1 | atom column |
+| `condition_metal-coord_1_atom` | `_atom_site.ma_condition_metal_coord_1_atom` | atom/1 | atom column |
+| `condition_secondary-structure_1_residue` | `_atom_site.ma_condition_secondary_structure_1_residue` | residue/1 | atom column |
+| `condition_index-group_1_token` | `_atom_site.ma_condition_index_group_1_token` | token/1 | atom column |
+| `condition_cath-label_1_residue` | `_atom_site.ma_condition_cath_label_1_residue` | residue/1 | atom column |
+| `condition_InternalCoordinate_1_atom` | `ma_condition_InternalCoordinate_1_atom` | atom/1 | idx/val table |
+| `condition_ChainCentroid_1_atom` | `ma_condition_ChainCentroid_1_atom` | atom/1 | idx/val table |
+| `condition_CoordinateGroup_1_atom` | `_atom_site.ma_condition_CoordinateGroup_1_atom` | atom/1 | atom column |
+| `condition_basepair_2_residue` | `ma_condition_basepair_2_residue` | residue/2 | idx/val table |
+| `condition_na-ss-state_1_residue` | `_atom_site.ma_condition_na_ss_state_1_residue` | residue/1 | atom column |
+| `annotation_src-coordinate-conditioned-region_1_atom` | `_atom_site.ma_annotation_src_coordinate_conditioned_region_1_atom` | atom/1 | atom column |
+| `annotation_src-component_1_atom` | `_atom_site.ma_annotation_src_component_1_atom` | atom/1 | atom column |
+| `annotation_src-index-group_1_atom` | `_atom_site.ma_annotation_src_index_group_1_atom` | atom/1 | atom column |
+| `is_unindexed_insertion` | `_atom_site.ma_is_unindexed_insertion` | atom/1 | atom column |
+| `annotation_coords-with-insertion_1_atom` | `ma_annotation_coords_with_insertion_1_atom` | atom/1 | idx/val table |
+| `condition_sequence-probability-ALA_1_residue` | `_atom_site.ma_condition_sequence_probability_ALA_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-ARG_1_residue` | `_atom_site.ma_condition_sequence_probability_ARG_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-ASN_1_residue` | `_atom_site.ma_condition_sequence_probability_ASN_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-ASP_1_residue` | `_atom_site.ma_condition_sequence_probability_ASP_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-CYS_1_residue` | `_atom_site.ma_condition_sequence_probability_CYS_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-GLN_1_residue` | `_atom_site.ma_condition_sequence_probability_GLN_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-GLU_1_residue` | `_atom_site.ma_condition_sequence_probability_GLU_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-GLY_1_residue` | `_atom_site.ma_condition_sequence_probability_GLY_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-HIS_1_residue` | `_atom_site.ma_condition_sequence_probability_HIS_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-ILE_1_residue` | `_atom_site.ma_condition_sequence_probability_ILE_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-LEU_1_residue` | `_atom_site.ma_condition_sequence_probability_LEU_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-LYS_1_residue` | `_atom_site.ma_condition_sequence_probability_LYS_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-MET_1_residue` | `_atom_site.ma_condition_sequence_probability_MET_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-PHE_1_residue` | `_atom_site.ma_condition_sequence_probability_PHE_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-PRO_1_residue` | `_atom_site.ma_condition_sequence_probability_PRO_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-SER_1_residue` | `_atom_site.ma_condition_sequence_probability_SER_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-THR_1_residue` | `_atom_site.ma_condition_sequence_probability_THR_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-TRP_1_residue` | `_atom_site.ma_condition_sequence_probability_TRP_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-TYR_1_residue` | `_atom_site.ma_condition_sequence_probability_TYR_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-VAL_1_residue` | `_atom_site.ma_condition_sequence_probability_VAL_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-A_1_residue` | `_atom_site.ma_condition_sequence_probability_A_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-C_1_residue` | `_atom_site.ma_condition_sequence_probability_C_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-G_1_residue` | `_atom_site.ma_condition_sequence_probability_G_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-U_1_residue` | `_atom_site.ma_condition_sequence_probability_U_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-DA_1_residue` | `_atom_site.ma_condition_sequence_probability_DA_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-DC_1_residue` | `_atom_site.ma_condition_sequence_probability_DC_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-DG_1_residue` | `_atom_site.ma_condition_sequence_probability_DG_1_residue` | residue/1 | atom column |
+| `condition_sequence-probability-DT_1_residue` | `_atom_site.ma_condition_sequence_probability_DT_1_residue` | residue/1 | atom column |
 
-For a comparison with the actual AtomWorks serialization layout and the complete category list, see the [proposal overview](README.md#comparison-with-atomworks-files).
+## Source and interpretation notes
 
-## Generic API requirements
+AtomWorks was inspected at d922a471381dd0f8bccaf78c384a6b56b6f8e391; its serializer/base-definition blobs matched the public production branch checked on 15 November 2026. RFD4 was inspected at 68058693cb88762a8aaf806571e13b291ce6318a. The earlier inventory was rechecked against these source definitions. Values/masks and actual consumer behavior matter more than class names alone.
 
-| API concept | Standard contract |
-| --- | --- |
-| definition identity and extension registry | Stable identifier/namespace/version, scientific definition, registered shared terms and custom terms; no executable code loading. |
-| semantic level | Direct atom/residue/chain references where sufficient; explicit membership/context/order for groups. Existing features support complex selections. |
-| body order | Zero-body set context, direct atom/residue rows or the shared value table for other subjects/pairs/defaults; explicit pair symmetry and independent group size. |
-| scalar type and categorical domain | Defined portable scalar domains and symbolic/code meanings; reject unsupported dtypes explicitly rather than silently coercing. |
-| value shape | Dictionary-fixed scalar/XYZ fields for common values; definition rank, shared fixed axes/labels, instance dimensions only where needed, and explicit element states. |
-| defaults and masks | Definition-specific inactive/unknown/not-applicable/explicit states; uniform scalar defaults and per-element omission states; materialize structure-dependent default functions as effective values with provenance. |
-| broadcasting and sparse pairs | Validate level consistency before collapse; preserve sparse storage and omitted-value rules; no forced dense pair matrices. |
-| coordinates and transformations | Frame/scoped membership, point versus vector transformation rule, explicit revalidation after membership change. |
-| index and future topology | Logical subject records with bounds/context; topology and ordered realization use one relation table, without fake atoms. |
-| metadata lifecycle | Retain definitions/provenance alongside arrays; copy/slice/concatenate/assembly/edit remap or explicitly invalidate references. |
-| custom definitions and unknown content | Same generic representation and types; distinguish retention from semantic execution support; reject unsupported required conditions. |
-| file migration | One canonical ModelCIF representation, retaining compact tables where possible. A versioned converter may rewrite historical files; permanent legacy reading and byte/name identity are unnecessary. |
+- [AtomWorks serializer and reader](https://github.com/RosettaCommons/atomworks/blob/d922a471381dd0f8bccaf78c384a6b56b6f8e391/src/atomworks/io/utils/standard_annotations/serialization.py)
+- [AtomWorks standard definitions](https://github.com/RosettaCommons/atomworks/blob/d922a471381dd0f8bccaf78c384a6b56b6f8e391/src/atomworks/io/utils/standard_annotations/definitions.py)
+- [AtomWorks conditions](https://github.com/RosettaCommons/atomworks/blob/d922a471381dd0f8bccaf78c384a6b56b6f8e391/src/atomworks/ml/conditions/definitions.py)
+- [RFD4 conditions and probability family](https://github.com/RosettaCommons/RFD4-Proteina/blob/68058693cb88762a8aaf806571e13b291ce6318a/src/rfproteina/conditions.py)
+- [RFD4 derived annotations](https://github.com/RosettaCommons/RFD4-Proteina/blob/68058693cb88762a8aaf806571e13b291ce6318a/src/rfproteina/utils/standard_annotations.py)
 
-## Source scope
+The boolean chain mask does not establish that False is an active different-chain constraint. The base-pair enum does not establish that all RFD4 consumers honor negative rows. The source-label fields do not establish global correspondence. RASA, interaction and classification labels need operational profiles. The proposal preserves these values and states their limits rather than inventing missing scientific semantics.
 
-The inventory was extracted from these four definition modules, including the dynamic probability family. AtomWorks was subsequently re-reviewed at `d922a471381dd0f8bccaf78c384a6b56b6f8e391`; RFD4 remains at `68058693cb88762a8aaf806571e13b291ce6318a`.
-
-- [rfproteina/conditions.py](https://github.com/RosettaCommons/RFD4-Proteina/blob/68058693cb88762a8aaf806571e13b291ce6318a/src/rfproteina/conditions.py)
-- [rfproteina/utils/standard_annotations.py](https://github.com/RosettaCommons/RFD4-Proteina/blob/68058693cb88762a8aaf806571e13b291ce6318a/src/rfproteina/utils/standard_annotations.py)
-- [atomworks/io/utils/standard_annotations/definitions.py](https://github.com/RosettaCommons/atomworks/blob/a0c63a8f77e76aba93857f444d02092354972c45/src/atomworks/io/utils/standard_annotations/definitions.py)
-- [atomworks/ml/conditions/definitions.py](https://github.com/RosettaCommons/atomworks/blob/a0c63a8f77e76aba93857f444d02092354972c45/src/atomworks/ml/conditions/definitions.py)
-
-## Migration boundary
-
-The dictionary represents the generic API, while library adapters must make its semantics executable. Retain AtomWorks' registry, StandardAnnotation/AtomArrayPlus interfaces and in-memory arrays. Add canonical readers/writers and a metadata owner that survives copying, slicing, concatenation, assembly generation and edits. Reuse RFD4's condition interface, but materialize effective defaults and save provenance before model featurization. No neural-network architecture change is implied.
-
-A converter must resolve aliases, map legacy indices to stable subjects, collapse broadcast values only after consistency checks, preserve sparse omissions and states, and make frames/tokenization explicit. It must never guess unknown component identity, source correspondence, partial geometry or ambiguous C_BP values. Convert whole dataset versions with updated checksums/manifests. Acceptance requires semantic roundtrips and equivalent effective model inputs across representative inference and preprocessing paths; the dictionary examples do not establish that result.
-
-Source behavior checked in addition to definitions: [base-pair conditioning and centroid featurization](https://github.com/RosettaCommons/RFD4-Proteina/blob/68058693cb88762a8aaf806571e13b291ce6318a/src/rfproteina/datapipes/pipeline.py) and [nucleic-geometry helpers](https://github.com/RosettaCommons/RFD4-Proteina/blob/68058693cb88762a8aaf806571e13b291ce6318a/src/rfproteina/transforms/na_geom.py).
+The codec supports scalar and fixed-width vector payloads, including sparse pairs. The API also exposes six levels, defaults and registration; interoperable grouping/default behavior is specified in the contract. Arbitrary tensor ranks, coordinate-free future topology and automatic execution of unknown Python classes are not claimed as implemented by this component.
