@@ -3,7 +3,7 @@ from pathlib import Path
 import tempfile
 import unittest
 import gemmi
-from validate_annotations import validate, records
+from validate_annotations import validate, CANONICAL28
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = ROOT / 'dictionary_documentation/proposals/input_annotations'
@@ -215,6 +215,56 @@ class AnnotationTests(unittest.TestCase):
         for k in values: values[k].append('10' if k == 'id' else values[k][7])
         b.set_mmcif_category('_ma_annotation_value.',values)
         self.assertTrue(any('default: duplicate assignment' in e for e in validate(b)))
+
+    def test_non_scalar_default_states(self):
+        for definition in ('1', '9', '11'):  # Point, array, group.
+            for state in ('unknown', 'unconstrained', 'not_applicable'):
+                with self.subTest(definition=definition, state=state):
+                    b = example()
+                    values = b.get_mmcif_category('_ma_annotation_value.')
+                    row = dict(id='10', set_id='1', definition_id=definition,
+                               is_default='YES', state=state)
+                    for k in values: values[k].append(row.get(k, False))
+                    b.set_mmcif_category('_ma_annotation_value.', values)
+                    self.assertTrue(any('default/element must be scalar' in e for e in validate(b)))
+        # Unknown scalar defaults remain valid data, pending execution resolution.
+        b = example()
+        mutate(b, 'value', 'state', 7, 'unknown')
+        mutate(b, 'value', 'value_boolean', 7, False)
+        self.assertEqual(validate(b), [])
+
+    def test_probability_domain_requires_mass(self):
+        b = example('worked-annotations.cif')
+        components = sorted(CANONICAL28)
+        b.set_mmcif_category('_chem_comp.', {'id': components})
+        residues = b.get_mmcif_category('_ma_annotation_residue.')
+        residues = {k: [v[0]] * len(components) for k, v in residues.items()}
+        residues.update(id=[str(i + 1) for i in range(len(components))],
+                        component_id=components, value_real=[False] * len(components),
+                        state=['not_applicable'] * len(components))
+        b.set_mmcif_category('_ma_annotation_residue.', residues)
+        self.assertTrue(any('complete distribution must sum to one' in e for e in validate(b)))
+        candidate = components.index('ALA')
+        mutate(b, 'residue', 'state', candidate, 'unknown')
+        self.assertEqual(validate(b), [])  # Unresolved mass remains unknown.
+        mutate(b, 'residue', 'state', candidate, 'specified')
+        mutate(b, 'residue', 'value_real', candidate, '0')
+        self.assertTrue(any('complete distribution must sum to one' in e for e in validate(b)))
+        mutate(b, 'residue', 'value_real', candidate, '1')
+        self.assertEqual(validate(b), [])
+
+    def test_equivalent_integer_axis_spellings(self):
+        b = example()
+        mutate(b, 'axis', 'axis_order', 0, '01')
+        mutate(b, 'axis', 'axis_order', 1, '+2')
+        mutate(b, 'axis', 'length', 1, '02')
+        self.assertEqual(validate(b), [])
+        # Different spellings still refer to the same instance dimension.
+        axes = b.get_mmcif_category('_ma_annotation_axis.')
+        for k in axes:
+            axes[k].append({'id': '4', 'axis_order': '+1'}.get(k, axes[k][2]))
+        b.set_mmcif_category('_ma_annotation_axis.', axes)
+        self.assertTrue(any('duplicate or undeclared axis' in e for e in validate(b)))
 
     def test_cif_binarycif_roundtrip(self):
         # An independent parser/writer checks retained categories, values and null

@@ -37,7 +37,9 @@ CifCheck \
 
 Inspect `*-diag.log` and `*-parser.log` in the working directory, **not just process exit codes**. Dictionary compilation validates against DDL2; file checks validate against the assembled ModelCIF dictionary. The extension-only build depends on the parent dictionary and is not a standalone replacement for the assembled dictionary.
 
-## Results on 11 November 2026
+## Results reviewed on 15 November 2026
+
+Dictionary and example sources are unchanged from 11 November. Fresh RCSB diagnostics and the semantic suite were checked again on 15 November; the conditional checker now also rejects non-scalar defaults in every state and empty complete probability domains, and compares array dimension integers numerically.
 
 | Check | Result |
 | --- | --- |
@@ -46,8 +48,8 @@ Inspect `*-diag.log` and `*-parser.log` in the working directory, **not just pro
 | Both complete annotation examples against assembled dictionary | No parser or dictionary diagnostics |
 | Deliberately invalid `value_kind` enumeration | Rejected in diagnostic log |
 | Existing four repository examples | Diagnostics identical with published baseline and proposed dictionary; existing examples are not all clean under the current validator |
-| Semantic suite | 12 tests passed, including 64 invalid-input mutations plus identity conflict, symmetric-pair duplicate and incomplete geometric-triple rejection |
-| Valid edge cases | Unknown data retention, zero-length array dimension, point/vector arrays, explicit defaults/states, shared fixed axes/labels, no redundant per-array axes, shuffled records and frame-ID renaming |
+| Semantic suite | 15 tests passed, including the 64-case invalid-input mutation matrix, non-scalar defaults in non-specified states, empty complete probability domains, identity conflict, symmetric-pair duplicate and incomplete geometric-triple rejection |
+| Valid edge cases | Unknown data retention, zero-length array dimension, point/vector arrays, explicit defaults/states, shared fixed axes/labels, equivalent integer spellings, no redundant per-array axes, shuffled records and frame-ID renaming |
 | Independent interchange | Gemmi and Biotite CIF/BinaryCIF roundtrip preserves category content and null states; semantic checks pass after roundtrip |
 
 The extended example exercises all 16 categories. Parsed definitions, sets, frames, atom rows and residue rows in the compact example are unchanged from draft 0.1.0; only its draft audit/version declaration changes. The dictionary shrinks from 247 to 157 items without dropping the 59-entry source crosswalk. Conditional checks cover selectors, scopes, payloads, domains, frames, pair uniqueness, membership/order, logical bounds, arrays, shared probability/identity semantics and protocol-linked correspondence. Production readers must additionally implement scientific definitions, final chemical/topological feasibility, lifecycle transformations and effective-condition execution. These checks are not a ModelArchive deposition certification, a throughput benchmark or proof of AtomWorks/RFD4/python-modelcif adapter compatibility. No such adapter is claimed in this PR.

@@ -1,6 +1,6 @@
 # Annotation coverage
 
-The consolidated 16-category draft dictionary covers the six semantic levels, body orders 0/1/2, typed scalars and shaped values, domains/defaults, sparse relations, custom definitions and metadata-preserving edits. This table groups all 59 entries in a scoped source inventory; it is not a full live-registry enumeration or proof of production-library conformance. All entries have a carrier mapping; shared scientific registration of custom operational definitions still requires domain review.
+The consolidated 16-category draft dictionary covers the six semantic levels, body orders 0/1/2, typed scalars and shaped values, domains/defaults, sparse relations, custom definitions and metadata needed to preserve annotations through edits. This table groups all 59 entries in a scoped source inventory; it is not a full live-registry enumeration or proof of production-library conformance. All entries have a carrier mapping; shared scientific registration of custom operational definitions still requires domain review.
 
 | Existing annotations | Canonical representation and conversion requirements |
 | --- | --- |

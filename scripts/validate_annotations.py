@@ -298,15 +298,15 @@ def validate(block):
     probability_states = defaultdict(dict)
     identities = {}
     def payload(row, definition, context, label, scalar_only=False):
+        kind = definition.get('value_kind')
+        check(not scalar_only or kind in SCALAR, label + ': default/element must be scalar')
         state = row.get('state', 'specified')
         check(state in ('specified','unconstrained','unknown','not_applicable'), label + ': explicit null/invalid state')
         actual = selected(row, PAYLOAD)
         if state != 'specified':
             check(not actual, label + ': non-specified state carries payload'); return
-        kind = definition.get('value_kind')
         expected = {SCALAR[kind]} if kind in SCALAR else {'x','y','z','frame_id'} if kind in ('point3','vector3') else {'array_id'} if kind == 'array' else {'value_group_id'}
         if kind == 'array' and definition.get('array_transform') in ('point3','vector3'): expected.add('frame_id')
-        check(not scalar_only or kind in SCALAR, label + ': default/element must be scalar')
         check(actual == expected, label + ': payload fields do not match kind')
         for field in actual & {'value_real','x','y','z'}:
             num(row[field], label + ': nonfinite/invalid number')
@@ -410,10 +410,10 @@ def validate(block):
                     probabilities[sitekey][param] = value
                 if definition.get('definition_key') == 'proposal:sequence_identity':
                     identities[sitekey] = r.get('value_comp_id')
-    for key, values in probabilities.items():
+    for key, states in probability_states.items():
+        values = probabilities[key]
         total = sum(values.values())
         check(total <= 1 + TOLERANCE, 'probability: supplied mass exceeds one')
-        states = probability_states[key]
         if len(states) == len(CANONICAL28) and all(v in ('specified','not_applicable') for v in states.values()):
             check(abs(total - 1) <= TOLERANCE, 'probability: complete distribution must sum to one')
         if key in identities:
@@ -463,19 +463,19 @@ def validate(block):
         if len(owners[aid]) != 1: continue
         d, context = owners[aid][0]
         rank = num(d.get('array_rank'),'array: invalid definition rank',True)
-        declared = {a.get('axis_order'):a for a in def_axes[d.get('id')]}
-        dimensions = {a.get('axis_order'):a for a in axes[aid]}
+        declared = {num(a.get('axis_order'),'axis: invalid order',True):a for a in def_axes[d.get('id')]}
+        dimensions = {num(a.get('axis_order'),'axis: invalid order',True):a for a in axes[aid]}
         check(len(dimensions) == len(axes[aid]) and set(dimensions) <= set(declared),'array: duplicate or undeclared axis')
         shape = []
         for order in range(1,rank+1):
-            da = declared.get(str(order),{})
-            actual = dimensions.get(str(order))
+            da = declared.get(order,{})
+            actual = dimensions.get(order)
             fixed = da.get('length')
             if fixed is None: check(actual is not None,'array: missing variable dimension')
             length = actual.get('length') if actual else fixed
             n = num(length,'array: invalid/missing dimension length',True); shape.append(n)
             check(n >= 0,'axis: negative length')
-            if fixed is not None: check(str(n) == fixed,'axis: disagrees with definition')
+            if fixed is not None: check(n == num(fixed,'axis: invalid fixed length',True),'axis: disagrees with definition')
             inherited = bool(labels[da.get('id')])
             if inherited:
                 check(not actual or not labels[actual.get('id')],'axis: cannot override shared labels')
@@ -489,7 +489,7 @@ def validate(block):
             payload({k:v for k,v in e.items() if k != 'array_id'},{'value_kind':d.get('array_element_kind')},context,'array_value',True)
             element_states[i] = e.get('state','specified')
         if d.get('array_transform') in ('point3','vector3'):
-            check(bool(shape) and declared.get(str(rank),{}).get('label_kind') == 'Cartesian' and shape[-1] == 3 and d.get('array_element_kind') == 'real','array: geometric values require final real Cartesian axis')
+            check(bool(shape) and declared.get(rank,{}).get('label_kind') == 'Cartesian' and shape[-1] == 3 and d.get('array_element_kind') == 'real','array: geometric values require final real Cartesian axis')
             for start in {((i-1)//3)*3+1 for i in seen}:
                 states = {element_states.get(i,array.get('omitted_state')) for i in range(start,start+3)}
                 check(len(states) == 1,'array: partial geometric triple')
