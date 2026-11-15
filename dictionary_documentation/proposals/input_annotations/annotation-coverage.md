@@ -25,6 +25,8 @@ The consolidated 16-category draft dictionary covers the six semantic levels, bo
 
 The 28 probability components are `ALA ARG ASN ASP CYS GLN GLU GLY HIS ILE LEU LYS MET PHE PRO SER THR TRP TYR VAL A C G U DA DC DG DT`. Rows name components directly. The worked definition fixes this 28-component domain once in the specification; other domains require a separately versioned definition. General array axes must still declare their labels/order, without private channel conventions.
 
+For a comparison with the actual AtomWorks serialization layout and the complete category list, see the [proposal overview](README.md#comparison-with-atomworks-files).
+
 ## Generic API requirements
 
 | API concept | Standard contract |
